@@ -1,9 +1,7 @@
 mod app;
 
-use app::HelloWorld;
-
-use yew::prelude::*; 
+use app::App;
 
 fn main() {
-    yew::start_app::<HelloWorld>();    
+    yew::start_app::<App>();    
 }
