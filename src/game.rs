@@ -27,7 +27,7 @@ struct Flag {
 
 // TODO: Requires more error handling -> Result<Vec<Country>, _>
 async fn get_countries(continent: &str) -> Vec<Country> {
-    // This either due to obscurity or 
+    // This either due to obscurity or too difficult string to handle
     let omitted_flags: Vec<String> = vec![
         // Europe
         "Guernsey".to_string(),
@@ -110,16 +110,21 @@ pub fn game_display(props: &Props) -> Html {
         let counter = counter_clone.clone();
         let input_node = input_node_display.clone();
         let length = length_clone.clone();
+        let correct_answer = correct_answer_store.clone();
 
         if e.char_code() == 13 {
             if let Some(input) = input_node.cast::<HtmlInputElement>() {
                 match &*resp {
                     Some(countries) => {
-                        if countries[*counter].name.common == input.value() {
+                        let name = &countries[*counter].name.common;
+                        if name == &input.value() {
                             counter.set(*counter + 1);
+                            correct_answer.set(String::new());
                             input.set_value("");
                         } else {
                             counter.set(*counter + 1);
+                            correct_answer.set(name.clone());
+                            input.set_value("");
                         }
                     },
                     None => (),
@@ -135,8 +140,8 @@ pub fn game_display(props: &Props) -> Html {
             move |_| {
                 wasm_bindgen_futures::spawn_local(async move {
                     let countries = get_countries(&region).await;        
-                    length.set(countries.len());
                     console::log_1(&JsString::from(format!("{}", countries.len())));
+                    length.set(countries.len());
                     resp.set(Some(countries)); 
                 });
                 || ()
@@ -147,19 +152,31 @@ pub fn game_display(props: &Props) -> Html {
 
     html! {
         <>
-            <div>
-            {
-                match &*resp_display {
-                    Some(countries) => {
-                        html! {
-                            <img src={ countries[*counter].flags.svg.clone() }/>
-                        }
-                    },
-                    None => html!("No data yet"), 
+            <div class="game">
+                <div>
+                {
+                    match &*resp_display {
+                        Some(countries) => {
+                            html! {
+                                <img src={ countries[*counter].flags.svg.clone() }/>
+                            }
+                        },
+                        None => html!("No data yet"), 
+                    }
                 }
-            }
+                </div>
+                <div>
+                    <p> 
+                        {
+                            match (*correct_answer).as_str() {
+                                "" => String::new(),
+                                _ => format!("Previous: {}", (*correct_answer).as_str()),
+                            }
+                        }
+                    </p>
+                </div>
+                <input ref={input_node} onkeypress={ submit_input }/>
             </div>
-            <input ref={input_node} onkeypress={ submit_input }/>
         </>
     }
 }

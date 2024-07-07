@@ -1,5 +1,6 @@
 mod app;
 mod game;
+mod home;
 
 use app::App;
 
