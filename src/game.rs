@@ -109,7 +109,7 @@ pub fn game_display(props: &Props) -> Html {
         let resp = resp_cmp.clone();
         let counter = counter_clone.clone();
         let input_node = input_node_display.clone();
-        let length = length_clone.clone();
+        let _length = length_clone.clone();
         let correct_answer = correct_answer_store.clone();
 
         if e.char_code() == 13 {

@@ -3,6 +3,7 @@
 A game where you try to guess a flag by the name of the country representing that flag.
 
 ## Future plans
+- Add game over screen
 - Add point system
 - Randomizer (i.e. guess set of random flags from different continents)
 - Multiplayer? (server implementation, versus)
